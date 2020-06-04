@@ -28,8 +28,41 @@ vector<int> block2array(cv::Mat, int, int);
 
 
 // m-sequence for sync, message
-vector<bool> sync_seq;
-vector<bool> message_seq;
+vector<int> sync_seq = {};
+vector<int> message_seq;
+/*
+int main(int argc, char* argv[])
+{
+	int m = 6; //2^m-1 bits per generated sequence
+	cout << "m = 6 (63 bits per sequence : L=2^m-1)" << endl << endl;
+	cout << "Generating 3 MLS sequences using AES256-CTR" << endl;
+	mls mls_aes(8, true);
+	for (int i = 0; i < 3; i++)
+	{
+		cout << "Sequence #" << i + 1 << ": ";
+		vector<int> mls_seq = mls_aes.get_seq();
+		for (int b = 0; b < mls_seq.size(); b++)
+			cout << mls_seq[b] << " ";
+		cout << endl;
+	}
+	cout << endl;
+
+	cout << "Generate 3 MLS sequences using the device's entropy source std::random_device" << endl;
+	mls mls_rnd(10);
+	for (int i = 0; i < 3; i++)
+	{
+		cout << "Sequence #" << i + 1 << ": ";
+		vector<int> mls_seq = mls_rnd.get_seq();
+		for (int b = 0; b < mls_seq.size(); b++)
+			cout << mls_seq[b] << " ";
+		cout << endl;
+	}
+	cout << endl;
+
+	return -1;
+}
+*/
+
 
 int main() {
 
@@ -46,30 +79,52 @@ int main() {
 
 	printf("Enter key value : ");
 	cin >> key;
-
+	
 	// m-sequence generator
-	mls mls_aes(6, true);
-	mls mls_rnd(10);
+	//mls mls_aes(8,true);
+	//mls mls_rnd(10);
 
-	sync_seq = mls_rnd.get_seq();
-	sync_seq.push_back(1);
-	message_seq = mls_aes.get_seq();
-	message_seq.push_back(1);
+	//sync_seq = mls_rnd.get_seq();
+	//sync_seq.push_back(1);
+	//message_seq = mls_aes.get_seq();
+	//message_seq.push_back(1);
 
+
+	string stemp = "1 0 0 1 0 1 1 0 0 0 1 0 0 0 1 1 0 0 1 1 0 0 0 1 1 1 0 0 0 0 1 1 0 0 0 0 0 1 1 1 0 1 1 0 0 0 0 1 0 1 0 1 1 0 0 1 0 0 1 1 1 0 0 1 1 1 0 1 0 1 0 1 1 1 1 1 1 1 1 0 1 1 0 1 1 0 0 1 1 1 1 0 0 0 1 1 0 1 0 1 1 1 0 0 1 0 0 0 0 1 1 1 1 0 1 1 1 0 1 1 1 1 0 1 0 0 0 0 0 1 0 0 0 0 0 0 1 0 1 1 0 1 1 1 1 1 0 0 1 1 0 1 1 1 0 0 0 1 0 1 1 1 0 1 0 0 1 1 0 0 1 0 1 0 1 0 1 0 0 1 0 0 1 0 0 0 1 0 1 0 0 0 0 1 0 0 1 1 0 1 0 0 0 1 1 1 1 1 0 1 0 1 1 0 1 0 0 1 0 1 0 0 1 1 1 1 1 1 0 0 0 0 0 0 0 1 1 0 1 1 0 1 0 1 0 0 0 1 0 0 1 0 1 1 1 1";
+	for (int i = 0; i < stemp.length(); i++) {
+		if (stemp[i] == ' ')
+			continue;
+		message_seq.push_back(stemp[i] == '1' ? -1 : 1);
+	}
+
+	stemp = "0 1 0 0 0 0 1 1 0 1 1 1 1 1 1 1 0 0 1 1 1 0 0 0 1 1 0 1 0 1 0 0 1 0 1 0 0 0 0 1 0 0 0 0 1 0 0 1 0 1 1 0 1 1 1 1 1 0 1 0 1 1 1 0 0 0 1 0 1 1 1 0 0 1 0 0 0 0 1 1 1 1 1 0 1 1 0 1 0 1 0 1 0 0 0 1 0 1 1 1 1 0 1 1 0 0 1 1 1 0 0 1 1 1 1 1 0 0 0 0 0 1 1 1 0 0 1 0 0 1 0 1 0 1 1 0 0 1 0 1 1 1 1 0 0 1 0 1 1 1 0 0 0 0 0 1 0 1 0 1 1 0 1 1 0 0 1 1 0 0 0 0 1 1 0 1 0 1 1 0 1 1 1 0 1 0 0 0 1 0 1 0 1 1 1 1 1 1 0 1 0 0 0 1 1 1 0 0 1 1 0 1 1 1 0 0 1 0 1 0 0 0 1 1 0 1 0 0 0 0 0 0 1 1 0 0 1 0 0 1 0 0 0 1 0 0 0 0 0 1 0 0 1 1 0 1 1 0 1 0 0 1 1 1 1 0 0 1 1 0 1 0 1 0 1 1 0 0 0 0 1 0 1 1 1 0 1 1 0 1 0 0 0 1 1 0 0 0 0 1 0 0 1 1 1 1 1 1 1 0 1 1 1 0 0 0 1 1 1 1 0 0 0 0 0 0 1 1 1 0 1 1 0 1 1 0 0 0 1 0 1 0 0 0 1 0 0 1 1 0 0 1 0 0 0 0 0 1 1 0 1 0 0 1 0 0 1 1 1 1 0 1 1 1 1 1 0 0 0 1 0 1 0 1 0 1 1 0 1 0 0 0 0 1 0 1 0 0 0 0 0 0 0 1 0 1 1 0 1 1 0 1 1 1 1 0 0 1 1 1 1 0 0 0 1 0 0 0 1 1 1 1 1 1 0 1 1 0 0 0 1 1 1 0 1 0 1 1 0 1 0 1 0 0 0 0 1 1 0 0 1 1 0 1 1 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 1 1 0 1 1 0 1 1 0 1 0 1 1 1 0 1 0 1 1 1 1 0 0 0 0 1 0 1 0 1 0 0 1 0 0 0 0 1 0 1 1 0 0 1 0 0 1 1 0 0 0 0 0 1 0 0 0 1 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 1 0 0 1 1 0 1 0 0 1 1 0 1 0 1 1 1 1 1 0 0 1 1 0 0 0 1 1 1 1 1 0 0 1 0 0 0 1 1 1 0 1 1 1 1 1 1 0 0 0 0 1 1 1 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 0 0 0 1 1 1 0 0 0 1 0 0 1 1 1 0 1 1 0 0 1 0 1 0 1 1 1 0 1 1 1 1 0 1 0 1 0 0 0 1 1 1 1 0 1 0 0 1 0 1 0 1 0 0 0 0 0 1 0 1 1 1 1 1 1 1 1 0 1 0 1 0 1 0 1 0 1 1 1 1 0 1 0 0 0 0 1 1 1 0 1 0 0 1 0 0 0 1 1 0 0 1 0 1 1 0 1 0 1 1 0 0 1 1 1 1 0 1 0 1 1 0 0 0 1 1 0 0 1 1 1 1 1 1 0 0 1 0 1 0 1 0 1 0 0 1 1 0 0 1 1 0 0 1 0 1 0 0 1 1 1 1 1 0 1 0 0 1 1 1 0 0 0 0 1 0 0 0 1 1 0 1 1 0 0 1 0 0 0 1 0 1 0 0 1 1 0 1 1 1 1 0 1 1 1 0 1 0 1 0 1 1 1 0 0 1 1 0 0 1 1 1 0 1 1 1 0 1 1 1 0 0 1 1 1 0 1 0 1 0 0 1 1 1 0 1 0 0 0 0 0 1 1 1 1 0 1 1 0 1 1 1 0 0 0 0 1 1 0 0 0 1 0 0 1 0 1 0 0 1 0 1 1 0 0 1 1 0 1 0 0 0 1 0 0 0 1 0 1 1 0 1 0 0 1 0 1 1 1 0 1 0 0 1 1 0 0 0 1 0 1 1 0 0 0 0 0 0 1 0 1 0 0 1 0 0 1 0 1 1 1 1 1 0 1 1 1 1 0 0 0 1 1 0 0 0 1 1 0 1 1 1 0 1 1 0 0 0 0 1 1 1 1 0 0 1 0 0 1 1 1 0 0 1 0 1 1 0 0 1";
+	for (int i = 0; i < stemp.length(); i++) {
+		if (stemp[i] == ' ')
+			continue;
+		sync_seq.push_back(stemp[i] == '1' ? -1 : 1);
+	}
+
+	printf("%d %d\n", message_seq.size(), sync_seq.size());
+
+	cv::imshow("original", img);
 	// Encoding
 	cv::Mat img_encoded;
 	img_encoded = Encoder(img, watermark, key);
 
-	//cv::imshow("marked img", img_encoded);
+	cv::imshow("marked img", img_encoded);
+
+	cv::Mat tmp;
+	subtract(img, img_encoded, tmp);
+
 	//cv::imwrite("makred_img.jpg, img_encoded);
 
 	// Decoding
 	pair <cv::Mat, string> temp;
 	cv::Mat img_decoded;
 	string wm_decoded;
-	temp = Decoder(img_encoded, key);
-	img_decoded = temp.first;
-	wm_decoded = temp.second;
+	//temp = Decoder(img_encoded, key);
+	//img_decoded = temp.first;
+	//wm_decoded = temp.second;
 
 	//cv::imshow("Decoded img", img_decoded);
 	//printf("Decoded Watermark Message : %s\n",wm_decoded);
@@ -86,45 +141,67 @@ int main() {
 cv::Mat Encoder(cv::Mat img, string watermark, int key) {
 
 	// making sequence array for watermark
-	vector<bool> wm_seq;
-	wm_seq = sync_seq;
+	vector<int> wm_seq(sync_seq.begin(), sync_seq.end());
 	// shifting m-sequence for watermark
 	for (int i = 0; i < watermark.length(); i++) {
-		int message = watermark[i];
+		int message_loc = watermark[i];
 		for (int j = 0; j < 256; j++) {
-			wm_seq.push_back(message_seq[message++]);
-			if (message > 256)
-				message = 0;
+			if (message_loc >= message_seq.size())
+				message_loc = 0;
+			wm_seq.push_back(message_seq[message_loc++]);		
 		}
 	}
 
 	cv::Mat block = array2block(wm_seq, 64, key);
-
-	for (int i = 0; i < img.rows; i += 64) {
-		for (int j = 0; j < img.cols; j += 64) {
-
+	
+	int HVS = 5;
+	// watermarking (should change)
+	for (int i = 0; i < img.rows; i++) {
+		for (int j = 0; j < img.cols; j++) {
+			for (int k = 0; k < 3; k++) {
+				int a = img.at<Vec3b>(i, j)[k];
+				// clipping
+				if (img.at<Vec3b>(i, j)[k] + block.at<char>(i % 64, j % 64) * HVS < 0)
+					img.at<Vec3b>(i, j)[k] = 0;
+				else if (img.at<Vec3b>(i, j)[k] + block.at<char>(i % 64, j % 64) * HVS > 255)
+					img.at<Vec3b>(i, j)[k] = 255;
+				else
+					// watermarking
+					img.at<Vec3b>(i, j)[k] += block.at<char>(i % 64, j % 64) * HVS;
+				
+			}
+			
 		}
 	}
-
+	
 	return img;
 }
 
 // 1D array to 2D block matching
-cv::Mat array2block(vector<bool> rblock, int size, int key) {
-	cv::Mat block = cv::Mat(cv::Size(size, size), CV_8UC1);
-	
-	vector<int> temp(rblock.begin(), rblock.end());
+cv::Mat array2block(vector < int > rblock, int size, int key) {
+	cv::Mat block = cv::Mat(cv::Size(size, size), CV_8S);
+	//vector<int> temp(rblock.begin(), rblock.end());
+
+	if (key == 0)
+		key = 1;
+	if (key == 256)
+		key = 255;
 
 	int loc = 0;
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
-			block.at<int>(i, j) = (temp[loc] == 0 ? 1 : -1);
-			loc += key;
-			if (loc >= size)
+			while (rblock[loc] == 0) {
+				loc++;
 				loc %= size;
+			}
+
+			block.at<char>(i, j) = rblock[loc];	
+			rblock[loc] = 0;
+			loc += key;
+			if (loc >= rblock.size())
+				loc %= rblock.size();
 		}
 	}
-	
 	return block;
 }
 
@@ -136,6 +213,8 @@ pair<cv::Mat, string > Decoder(cv::Mat img, int key) {
 // 2D block to 1D array matching
 vector<int> block2array(cv::Mat block, int size, int key) {
 	vector<int> barray(size * size);
+
+
 
 	return barray;
 }
