@@ -30,38 +30,6 @@ vector<int> block2array(cv::Mat, int, int);
 // m-sequence for sync, message
 vector<int> sync_seq = {};
 vector<int> message_seq;
-/*
-int main(int argc, char* argv[])
-{
-	int m = 6; //2^m-1 bits per generated sequence
-	cout << "m = 6 (63 bits per sequence : L=2^m-1)" << endl << endl;
-	cout << "Generating 3 MLS sequences using AES256-CTR" << endl;
-	mls mls_aes(8, true);
-	for (int i = 0; i < 3; i++)
-	{
-		cout << "Sequence #" << i + 1 << ": ";
-		vector<int> mls_seq = mls_aes.get_seq();
-		for (int b = 0; b < mls_seq.size(); b++)
-			cout << mls_seq[b] << " ";
-		cout << endl;
-	}
-	cout << endl;
-
-	cout << "Generate 3 MLS sequences using the device's entropy source std::random_device" << endl;
-	mls mls_rnd(10);
-	for (int i = 0; i < 3; i++)
-	{
-		cout << "Sequence #" << i + 1 << ": ";
-		vector<int> mls_seq = mls_rnd.get_seq();
-		for (int b = 0; b < mls_seq.size(); b++)
-			cout << mls_seq[b] << " ";
-		cout << endl;
-	}
-	cout << endl;
-
-	return -1;
-}
-*/
 
 
 int main() {
