@@ -14,6 +14,9 @@
 // m sequence
 #include "mls.h"
 
+// weiner filter
+#include "wiener.h"
+
 #define M_PI 3.14159265358979323846
 
 using namespace std;
@@ -25,7 +28,7 @@ cv::Mat array2block(vector<int>, int, int);
 
 // jpg image to png seperating image and watermark with key
 pair<cv::Mat, string> Decoder(cv::Mat, int);
-vector<int> block2array(cv::Mat, int, int);
+vector<int> block2array(cv::Mat, cv::Point, int);
 
 string sync_temp = "1 0 0 1 0 1 1 0 0 0 1 0 0 0 1 1 0 0 1 1 0 0 0 1 1 1 0 0 0 0 1 1 0 0 0 0 0 1 1 1 0 1 1 0 0 0 0 1 0 1 0 1 1 0 0 1 0 0 1 1 1 0 0 1 1 1 0 1 0 1 0 1 1 1 1 1 1 1 1 0 1 1 0 1 1 0 0 1 1 1 1 0 0 0 1 1 0 1 0 1 1 1 0 0 1 0 0 0 0 1 1 1 1 0 1 1 1 0 1 1 1 1 0 1 0 0 0 0 0 1 0 0 0 0 0 0 1 0 1 1 0 1 1 1 1 1 0 0 1 1 0 1 1 1 0 0 0 1 0 1 1 1 0 1 0 0 1 1 0 0 1 0 1 0 1 0 1 0 0 1 0 0 1 0 0 0 1 0 1 0 0 0 0 1 0 0 1 1 0 1 0 0 0 1 1 1 1 1 0 1 0 1 1 0 1 0 0 1 0 1 0 0 1 1 1 1 1 1 0 0 0 0 0 0 0 1 1 0 1 1 0 1 0 1 0 0 0 1 0 0 1 0 1 1 1 1";
 string mes_temp = "0 1 0 0 0 0 1 1 0 1 1 1 1 1 1 1 0 0 1 1 1 0 0 0 1 1 0 1 0 1 0 0 1 0 1 0 0 0 0 1 0 0 0 0 1 0 0 1 0 1 1 0 1 1 1 1 1 0 1 0 1 1 1 0 0 0 1 0 1 1 1 0 0 1 0 0 0 0 1 1 1 1 1 0 1 1 0 1 0 1 0 1 0 0 0 1 0 1 1 1 1 0 1 1 0 0 1 1 1 0 0 1 1 1 1 1 0 0 0 0 0 1 1 1 0 0 1 0 0 1 0 1 0 1 1 0 0 1 0 1 1 1 1 0 0 1 0 1 1 1 0 0 0 0 0 1 0 1 0 1 1 0 1 1 0 0 1 1 0 0 0 0 1 1 0 1 0 1 1 0 1 1 1 0 1 0 0 0 1 0 1 0 1 1 1 1 1 1 0 1 0 0 0 1 1 1 0 0 1 1 0 1 1 1 0 0 1 0 1 0 0 0 1 1 0 1 0 0 0 0 0 0 1 1 0 0 1 0 0 1 0 0 0 1 0 0 0 0 0 1 0 0 1 1 0 1 1 0 1 0 0 1 1 1 1 0 0 1 1 0 1 0 1 0 1 1 0 0 0 0 1 0 1 1 1 0 1 1 0 1 0 0 0 1 1 0 0 0 0 1 0 0 1 1 1 1 1 1 1 0 1 1 1 0 0 0 1 1 1 1 0 0 0 0 0 0 1 1 1 0 1 1 0 1 1 0 0 0 1 0 1 0 0 0 1 0 0 1 1 0 0 1 0 0 0 0 0 1 1 0 1 0 0 1 0 0 1 1 1 1 0 1 1 1 1 1 0 0 0 1 0 1 0 1 0 1 1 0 1 0 0 0 0 1 0 1 0 0 0 0 0 0 0 1 0 1 1 0 1 1 0 1 1 1 1 0 0 1 1 1 1 0 0 0 1 0 0 0 1 1 1 1 1 1 0 1 1 0 0 0 1 1 1 0 1 0 1 1 0 1 0 1 0 0 0 0 1 1 0 0 1 1 0 1 1 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 1 1 0 1 1 0 1 1 0 1 0 1 1 1 0 1 0 1 1 1 1 0 0 0 0 1 0 1 0 1 0 0 1 0 0 0 0 1 0 1 1 0 0 1 0 0 1 1 0 0 0 0 0 1 0 0 0 1 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 1 0 0 1 1 0 1 0 0 1 1 0 1 0 1 1 1 1 1 0 0 1 1 0 0 0 1 1 1 1 1 0 0 1 0 0 0 1 1 1 0 1 1 1 1 1 1 0 0 0 0 1 1 1 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 0 0 0 1 1 1 0 0 0 1 0 0 1 1 1 0 1 1 0 0 1 0 1 0 1 1 1 0 1 1 1 1 0 1 0 1 0 0 0 1 1 1 1 0 1 0 0 1 0 1 0 1 0 0 0 0 0 1 0 1 1 1 1 1 1 1 1 0 1 0 1 0 1 0 1 0 1 1 1 1 0 1 0 0 0 0 1 1 1 0 1 0 0 1 0 0 0 1 1 0 0 1 0 1 1 0 1 0 1 1 0 0 1 1 1 1 0 1 0 1 1 0 0 0 1 1 0 0 1 1 1 1 1 1 0 0 1 0 1 0 1 0 1 0 0 1 1 0 0 1 1 0 0 1 0 1 0 0 1 1 1 1 1 0 1 0 0 1 1 1 0 0 0 0 1 0 0 0 1 1 0 1 1 0 0 1 0 0 0 1 0 1 0 0 1 1 0 1 1 1 1 0 1 1 1 0 1 0 1 0 1 1 1 0 0 1 1 0 0 1 1 1 0 1 1 1 0 1 1 1 0 0 1 1 1 0 1 0 1 0 0 1 1 1 0 1 0 0 0 0 0 1 1 1 1 0 1 1 0 1 1 1 0 0 0 0 1 1 0 0 0 1 0 0 1 0 1 0 0 1 0 1 1 0 0 1 1 0 1 0 0 0 1 0 0 0 1 0 1 1 0 1 0 0 1 0 1 1 1 0 1 0 0 1 1 0 0 0 1 0 1 1 0 0 0 0 0 0 1 0 1 0 0 1 0 0 1 0 1 1 1 1 1 0 1 1 1 1 0 0 0 1 1 0 0 0 1 1 0 1 1 1 0 1 1 0 0 0 0 1 1 1 1 0 0 1 0 0 1 1 1 0 0 1 0 1 1 0 0 1";
@@ -85,6 +88,10 @@ int main() {
 
 	//cv::imshow("Decoded img", img_decoded);
 	//printf("Decoded Watermark Message : %s\n",wm_decoded);
+
+
+	cv::imshow("decoded", img_decoded);
+
 	
 	while (1) {
 		char key = (char)cv::waitKey(10);
@@ -111,7 +118,7 @@ cv::Mat Encoder(cv::Mat img, string watermark, int key) {
 
 	cv::Mat block = array2block(wm_seq, 64, key);
 	
-	int HVS = 5;
+	int HVS = 3;
 	// watermarking (should change)
 	for (int i = 0; i < img.rows; i++) {
 		for (int j = 0; j < img.cols; j++) {
@@ -125,9 +132,7 @@ cv::Mat Encoder(cv::Mat img, string watermark, int key) {
 				else
 					// watermarking
 					img.at<Vec3b>(i, j)[k] += block.at<char>(i % 64, j % 64) * HVS;
-				
 			}
-			
 		}
 	}
 	
@@ -167,14 +172,62 @@ cv::Mat array2block(vector < int > rblock, int size, int key) {
 // Decoding image, seperating into watermark and png image from jpeg image
 pair<cv::Mat, string > Decoder(cv::Mat img, int key) {
 	
+	// denoising with wiener filter
+	cv::Mat denoised;
+
+	cv::Mat rgb_origin[3];
+	split(img, rgb_origin);
+	cv::Mat rgb_decoded[3];
+
+	WienerFilter(rgb_origin[0], rgb_decoded[0], cv::Size(5, 5));
+	WienerFilter(rgb_origin[1], rgb_decoded[1], cv::Size(5, 5));
+	WienerFilter(rgb_origin[2], rgb_decoded[2], cv::Size(5, 5));
+
+	// extracting watermark
+	cv::Mat rgb_sub(cv::Size(1024, 1024), CV_8S);
+	for (int i = 0; i < 1024; i++) {
+		for (int j = 0; j < 1024; j++) {
+			for (int k = 0; k < 3; k++) {
+				rgb_sub.at<char>(i,j) = rgb_decoded[k].at<unsigned char>(i, j) - rgb_origin[k].at<unsigned char>(i, j);
+
+				// clipping detect
+				if (rgb_sub.at<char>(i, j) == 0) {
+					if (rgb_decoded[k].at<unsigned char>(i, j) == 255) {
+						rgb_sub.at<char>(i, j) = 1;
+					}
+					else if (rgb_decoded[k].at<unsigned char>(i, j) == 0) {
+						rgb_sub.at<char>(i, j) = -1;
+					}
+				}
+
+				// change for binary code
+				rgb_sub.at<char>(i, j) = (rgb_sub.at<char>(i, j) == 1 ? 0 : 1);
+			}
+		}
+	}
+
+	cv::Mat sub_img;
+
+	// blocking
+	for (int i = 0; i < 1024 / 64; i++) {
+		for (int j = 0; j < 1024 / 64; j++) {
+			cv::Rect rect(i, j, 64, 64);
+			cv::Mat block = sub_img(rect);
+			
+
+		}
+	}
+
+
+
 
 
 	return { img, "asdfasd" };
 }
 
 // 2D block to 1D array matching
-vector<int> block2array(cv::Mat block, int size, int key) {
-	vector<int> barray(size * size);
+vector<int> block2array(cv::Mat block, cv::Point loc, int key) {
+	vector<int> barray(64 * 64);
 
 	pair<int, int> temp;
 
