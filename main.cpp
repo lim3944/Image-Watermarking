@@ -17,8 +17,6 @@
 // weiner filter
 #include "wiener.h"
 
-#define M_PI 3.14159265358979323846
-
 using namespace std;
 using namespace cv;
 
@@ -28,7 +26,9 @@ cv::Mat array2block(vector<int>, int, int);
 
 // jpg image to png seperating image and watermark with key
 pair<cv::Mat, string> Decoder(cv::Mat, int);
-vector<int> block2array(cv::Mat, cv::Point, int);
+vector<int> block2array(cv::Mat, int);
+
+cv::Mat pixelVar(cv::Mat);
 
 string sync_temp = "1 0 0 1 0 1 1 0 0 0 1 0 0 0 1 1 0 0 1 1 0 0 0 1 1 1 0 0 0 0 1 1 0 0 0 0 0 1 1 1 0 1 1 0 0 0 0 1 0 1 0 1 1 0 0 1 0 0 1 1 1 0 0 1 1 1 0 1 0 1 0 1 1 1 1 1 1 1 1 0 1 1 0 1 1 0 0 1 1 1 1 0 0 0 1 1 0 1 0 1 1 1 0 0 1 0 0 0 0 1 1 1 1 0 1 1 1 0 1 1 1 1 0 1 0 0 0 0 0 1 0 0 0 0 0 0 1 0 1 1 0 1 1 1 1 1 0 0 1 1 0 1 1 1 0 0 0 1 0 1 1 1 0 1 0 0 1 1 0 0 1 0 1 0 1 0 1 0 0 1 0 0 1 0 0 0 1 0 1 0 0 0 0 1 0 0 1 1 0 1 0 0 0 1 1 1 1 1 0 1 0 1 1 0 1 0 0 1 0 1 0 0 1 1 1 1 1 1 0 0 0 0 0 0 0 1 1 0 1 1 0 1 0 1 0 0 0 1 0 0 1 0 1 1 1 1";
 string mes_temp = "0 1 0 0 0 0 1 1 0 1 1 1 1 1 1 1 0 0 1 1 1 0 0 0 1 1 0 1 0 1 0 0 1 0 1 0 0 0 0 1 0 0 0 0 1 0 0 1 0 1 1 0 1 1 1 1 1 0 1 0 1 1 1 0 0 0 1 0 1 1 1 0 0 1 0 0 0 0 1 1 1 1 1 0 1 1 0 1 0 1 0 1 0 0 0 1 0 1 1 1 1 0 1 1 0 0 1 1 1 0 0 1 1 1 1 1 0 0 0 0 0 1 1 1 0 0 1 0 0 1 0 1 0 1 1 0 0 1 0 1 1 1 1 0 0 1 0 1 1 1 0 0 0 0 0 1 0 1 0 1 1 0 1 1 0 0 1 1 0 0 0 0 1 1 0 1 0 1 1 0 1 1 1 0 1 0 0 0 1 0 1 0 1 1 1 1 1 1 0 1 0 0 0 1 1 1 0 0 1 1 0 1 1 1 0 0 1 0 1 0 0 0 1 1 0 1 0 0 0 0 0 0 1 1 0 0 1 0 0 1 0 0 0 1 0 0 0 0 0 1 0 0 1 1 0 1 1 0 1 0 0 1 1 1 1 0 0 1 1 0 1 0 1 0 1 1 0 0 0 0 1 0 1 1 1 0 1 1 0 1 0 0 0 1 1 0 0 0 0 1 0 0 1 1 1 1 1 1 1 0 1 1 1 0 0 0 1 1 1 1 0 0 0 0 0 0 1 1 1 0 1 1 0 1 1 0 0 0 1 0 1 0 0 0 1 0 0 1 1 0 0 1 0 0 0 0 0 1 1 0 1 0 0 1 0 0 1 1 1 1 0 1 1 1 1 1 0 0 0 1 0 1 0 1 0 1 1 0 1 0 0 0 0 1 0 1 0 0 0 0 0 0 0 1 0 1 1 0 1 1 0 1 1 1 1 0 0 1 1 1 1 0 0 0 1 0 0 0 1 1 1 1 1 1 0 1 1 0 0 0 1 1 1 0 1 0 1 1 0 1 0 1 0 0 0 0 1 1 0 0 1 1 0 1 1 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 1 1 0 1 1 0 1 1 0 1 0 1 1 1 0 1 0 1 1 1 1 0 0 0 0 1 0 1 0 1 0 0 1 0 0 0 0 1 0 1 1 0 0 1 0 0 1 1 0 0 0 0 0 1 0 0 0 1 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 1 0 0 1 1 0 1 0 0 1 1 0 1 0 1 1 1 1 1 0 0 1 1 0 0 0 1 1 1 1 1 0 0 1 0 0 0 1 1 1 0 1 1 1 1 1 1 0 0 0 0 1 1 1 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 0 0 0 1 1 1 0 0 0 1 0 0 1 1 1 0 1 1 0 0 1 0 1 0 1 1 1 0 1 1 1 1 0 1 0 1 0 0 0 1 1 1 1 0 1 0 0 1 0 1 0 1 0 0 0 0 0 1 0 1 1 1 1 1 1 1 1 0 1 0 1 0 1 0 1 0 1 1 1 1 0 1 0 0 0 0 1 1 1 0 1 0 0 1 0 0 0 1 1 0 0 1 0 1 1 0 1 0 1 1 0 0 1 1 1 1 0 1 0 1 1 0 0 0 1 1 0 0 1 1 1 1 1 1 0 0 1 0 1 0 1 0 1 0 0 1 1 0 0 1 1 0 0 1 0 1 0 0 1 1 1 1 1 0 1 0 0 1 1 1 0 0 0 0 1 0 0 0 1 1 0 1 1 0 0 1 0 0 0 1 0 1 0 0 1 1 0 1 1 1 1 0 1 1 1 0 1 0 1 0 1 1 1 0 0 1 1 0 0 1 1 1 0 1 1 1 0 1 1 1 0 0 1 1 1 0 1 0 1 0 0 1 1 1 0 1 0 0 0 0 0 1 1 1 1 0 1 1 0 1 1 1 0 0 0 0 1 1 0 0 0 1 0 0 1 0 1 0 0 1 0 1 1 0 0 1 1 0 1 0 0 0 1 0 0 0 1 0 1 1 0 1 0 0 1 0 1 1 1 0 1 0 0 1 1 0 0 0 1 0 1 1 0 0 0 0 0 0 1 0 1 0 0 1 0 0 1 0 1 1 1 1 1 0 1 1 1 1 0 0 0 1 1 0 0 0 1 1 0 1 1 1 0 1 1 0 0 0 0 1 1 1 1 0 0 1 0 0 1 1 1 0 0 1 0 1 1 0 0 1";
@@ -48,11 +48,11 @@ int main() {
 
 	// Watermark and key value setting
 	while (watermark.length() != 12) {
-		printf("Enter 12 letters watermark :");
+		std::printf("Enter 12 letters watermark :");
 		cin >> watermark;
 	}
 
-	printf("Enter key value : ");
+	std::printf("Enter key value : ");
 	cin >> key;
 	
 	// m-sequenc for sync and message
@@ -69,30 +69,29 @@ int main() {
 	}
 
 	cv::imshow("original", img);
+	cv::Mat input;
+	img.copyTo(input);
 
 	// Encoding
 	cv::Mat img_encoded;
-	img_encoded = Encoder(img, watermark, key);
+	img_encoded = Encoder(input, watermark, key);
 
 	cv::imshow("watermarked img", img_encoded);
 
-	//cv::imwrite("makred_img.jpg, img_encoded);
+	//cv::imwrite("makred_img.jpg", img_encoded);
 
 	// Decoding
-	pair <cv::Mat, string> temp;
-	cv::Mat img_decoded;
-	string wm_decoded;
+	//pair <cv::Mat, string> temp;
+	//cv::Mat img_decoded;
+	//string wm_decoded;
 	//temp = Decoder(img_encoded, key);
 	//img_decoded = temp.first;
 	//wm_decoded = temp.second;
 
 	//cv::imshow("Decoded img", img_decoded);
 	//printf("Decoded Watermark Message : %s\n",wm_decoded);
+	//cv::imshow("decoded", img_decoded);
 
-
-	cv::imshow("decoded", img_decoded);
-
-	
 	while (1) {
 		char key = (char)cv::waitKey(10);
 		if (key == 27)
@@ -118,12 +117,23 @@ cv::Mat Encoder(cv::Mat img, string watermark, int key) {
 
 	cv::Mat block = array2block(wm_seq, 64, key);
 	
-	int HVS = 3;
+	cv::Mat hvsMat;
+	hvsMat = pixelVar(img);
+	//imshow("var", hvsMat);
+	int HVS = 0;
 	// watermarking (should change)
+	
 	for (int i = 0; i < img.rows; i++) {
+		std::printf("watermakring...%d%%\n",i*100/1024);
 		for (int j = 0; j < img.cols; j++) {
 			for (int k = 0; k < 3; k++) {
+
 				int a = img.at<Vec3b>(i, j)[k];
+				HVS = hvsMat.at<Vec3b>(i, j)[k] / 10;
+				if (HVS <= 0)
+					HVS = 1;
+				if (HVS > 10)
+					HVS = 10;
 				// clipping
 				if (img.at<Vec3b>(i, j)[k] + block.at<char>(i % 64, j % 64) * HVS < 0)
 					img.at<Vec3b>(i, j)[k] = 0;
@@ -213,20 +223,16 @@ pair<cv::Mat, string > Decoder(cv::Mat img, int key) {
 		for (int j = 0; j < 1024 / 64; j++) {
 			cv::Rect rect(i, j, 64, 64);
 			cv::Mat block = sub_img(rect);
-			
-
+			vector<int> barray(64 * 64);
+			barray = block2array(block, key);
 		}
 	}
-
-
-
-
 
 	return { img, "asdfasd" };
 }
 
 // 2D block to 1D array matching
-vector<int> block2array(cv::Mat block, cv::Point loc, int key) {
+vector<int> block2array(cv::Mat block, int key) {
 	vector<int> barray(64 * 64);
 
 	pair<int, int> temp;
@@ -239,4 +245,63 @@ vector<int> block2array(cv::Mat block, cv::Point loc, int key) {
 	return barray;
 }
 
+// calcuate variacne of each pixel in 5X5 block
+cv::Mat pixelVar(cv::Mat img) {
+	cv::Mat rgb[3];
+	split(img, rgb);
+	int max = 0;
 
+	for (int i = 0; i < 1024; i++) {
+		if (i % 62 == 0)
+			std::printf("calculating...%d %%\n",i*100/1024);
+		for (int j = 0; j < 1024; j++) {
+			int sum[3] = { 0, };
+			int mean[3] = { 0, };
+			int var[3] = { 0, };
+			int cnt = 0;
+			
+			for (int dx = -2; dx <= 2; dx++) {
+				for (int dy = -2; dy <= 2; dy++) {
+					if (i + dx >= 0 && j + dy >= 0 && i + dx < 1024 && j + dy < 1024) {
+						sum[0] += img.at<Vec3b>(i + dx, j + dy)[0];
+						sum[1] += img.at<Vec3b>(i + dx, j + dy)[1];
+						sum[2] += img.at<Vec3b>(i + dx, j + dy)[2];
+						cnt++;
+					}
+				}
+			}
+
+			mean[0] = sum[0] / cnt;
+			mean[1] = sum[1] / cnt;
+			mean[2] = sum[2] / cnt;
+
+			for (int dx = -2; dx <= 2; dx++) {
+				for (int dy = -2; dy <= 2; dy++) {
+					if (i + dx >= 0 && j + dy >= 0 && i + dx < 1024 && j + dy < 1024) {
+						var[0] += (img.at<Vec3b>(i + dx, j + dy)[0] - mean[0])/cnt * (img.at<Vec3b>(i + dx, j + dy)[0] - mean[0]);
+						var[1] += (img.at<Vec3b>(i + dx, j + dy)[1] - mean[1])/cnt  * (img.at<Vec3b>(i + dx, j + dy)[1] - mean[1]);
+						var[2] += (img.at<Vec3b>(i + dx, j + dy)[2] - mean[2])/cnt * (img.at<Vec3b>(i + dx, j + dy)[2] - mean[2]);
+					}
+				}
+			}
+
+			rgb[0].at<char>(i, j) = (int)sqrt((float)var[0]);
+			rgb[1].at<char>(i, j) = (int)sqrt((float)var[1]);
+			rgb[2].at<char>(i, j) = (int)sqrt((float)var[2]);
+
+			if (max < var[0])
+				max = var[0];
+			if (max < var[1])
+				max = var[1];
+			if (max < var[2])
+				max = var[2];
+
+		}
+	}
+
+	std::printf("max = %d\n", max);
+
+	cv::Mat out;
+	cv::merge(rgb,3, out);
+	return out;
+}
