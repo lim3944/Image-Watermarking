@@ -46,7 +46,7 @@ int main() {
 	string watermark;
 	int key = 0;
 	cv::Mat img;
-	img = cv::imread("5.png"); // image name
+	img = cv::imread("6.png"); // image name
 
 	// Watermark and key value setting
 	while (watermark.length() != 12) {
@@ -70,12 +70,6 @@ int main() {
 		message_seq.push_back(mes_temp[i] == '1' ? -1 : 1);
 	}
 
-	for (int i = 0; i < 12; i++) {
-		printf("%d ", watermark[i]);
-	}
-
-	printf("\n");
-
 	//cv::imshow("original", img);
 	cv::Mat input;
 	img.copyTo(input);
@@ -87,7 +81,7 @@ int main() {
 
 	//cv::imshow("watermarked img", img_encoded);
 
-	cv::imwrite("5.jpg", img_encoded);
+	cv::imwrite("6.jpg", img_encoded);
 
 	// Decoding
 	string wm_decoded;
@@ -118,18 +112,20 @@ cv::Mat Encoder(cv::Mat img, string watermark, int key) {
 		}
 	}
 
+	// array to block
 	cv::Mat block = array2block(wm_seq, 64, key);
 	
 	hvsMat = pixelVar(img);
-	//imshow("var", hvsMat);
-	int HVS = 0;
-	// watermarking (should change)
 	
+	int HVS = 0;
+	
+	// watermarking process
 	for (int i = 0; i < img.rows; i++) {
 		std::printf("watermakring...%d%%\n",i*100/1024);
 		for (int j = 0; j < img.cols; j++) {
 			for (int k = 0; k < 3; k++) {
 
+				// set HVS value as alpha in watermark
 				int a = img.at<Vec3b>(i, j)[k];
 				HVS = hvsMat.at<Vec3b>(i, j)[k] / 10;
 				if (HVS <= 0)
@@ -137,6 +133,7 @@ cv::Mat Encoder(cv::Mat img, string watermark, int key) {
 				if (HVS > 10)
 					HVS = 10;
 				hvsMat.at<Vec3b>(i, j)[k] = HVS;
+
 				// clipping
 				if (img.at<Vec3b>(i, j)[k] + block.at<char>(i % 64, j % 64) * HVS < 0)
 					img.at<Vec3b>(i, j)[k] = 0;
@@ -154,8 +151,8 @@ cv::Mat Encoder(cv::Mat img, string watermark, int key) {
 
 // 1D array to 2D block matching
 cv::Mat array2block(vector < int > rblock, int size, int key) {
+
 	cv::Mat block = cv::Mat(cv::Size(size, size), CV_8S);
-	//vector<int> temp(rblock.begin(), rblock.end());
 
 	if (key == 0)
 		key = 1;
@@ -192,26 +189,27 @@ string Decoder(cv::Mat img, int key) {
 	split(img, rgb_origin);
 	cv::Mat rgb_decoded[3];
 
+	// denosing image using wiener-filter
 	WienerFilter(rgb_origin[0], rgb_decoded[0], cv::Size(3, 3));
 	WienerFilter(rgb_origin[1], rgb_decoded[1], cv::Size(3, 3));
 	WienerFilter(rgb_origin[2], rgb_decoded[2], cv::Size(3, 3));
-	//split(g, rgb_decoded);
 
 	string message;
 	message.resize(12);
 
 	int mes_value[12] = { 0, };
-
 	int sum_max = 0;
 
 	cv::Mat subimg(cv::Size(1024, 1024), CV_8S);
 
+	// Extracting watermark message
 	for (int channel = 0; channel < 3; channel++) {
 		for (int block_x = 0; block_x < 1024; block_x+= 64) {
 			printf("channel %d processing...%d%%\n", channel, block_x * 100 / (1024));
 			for (int block_y = 0; block_y < 1024; block_y += 64) {
 				// extract message per block
 				for (int i = block_x; i < block_x + 64; i++) {
+					// noised image - denoised image = noise
 					for (int j = block_y; j < block_y +64; j++) {
 						int rgb_sub = rgb_origin[channel].at<unsigned char>(i, j) - rgb_decoded[channel].at<unsigned char>(i, j);
 						
@@ -219,7 +217,7 @@ string Decoder(cv::Mat img, int key) {
 							rgb_sub = 1;
 						else if (rgb_sub < 0)
 							rgb_sub = -1;
-
+						// clipping detection
 						else if (rgb_sub == 0) {
 							if (rgb_decoded[channel].at<unsigned char>(i, j) == 255) {
 								rgb_sub = 1;
@@ -250,12 +248,6 @@ string Decoder(cv::Mat img, int key) {
 				if (sync_sum < 600)
 					continue;
 
-				//if (sum_max > sync_sum)
-				//	continue;
-
-				//sum_max = sync_sum;
-
-				//string mes;
 				// message decoding
 				for (int k = 0; k < 12; k++) {
 					for (int m = 0; m < 128; m++) {
@@ -263,6 +255,7 @@ string Decoder(cv::Mat img, int key) {
 						for (int index = 0; index < 256; index++)
 							mes_sum += message_seq[(index+m)%256] * barray[1024 + k*256+index];
 						
+						// save most accurate(highest) value as watermark
 						if (mes_sum > 150 && mes_sum > mes_value[k]) {
 							message[k] = m;
 							mes_value[k] = mes_sum;
