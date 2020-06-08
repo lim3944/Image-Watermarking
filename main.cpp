@@ -25,13 +25,15 @@ cv::Mat Encoder(cv::Mat, string, int);
 cv::Mat array2block(vector<int>, int, int);
 
 // jpg image to png seperating image and watermark with key
-pair<cv::Mat, string> Decoder(cv::Mat, int);
+string Decoder(cv::Mat, int);
 vector<int> block2array(cv::Mat, int);
 
 cv::Mat pixelVar(cv::Mat);
 
-string sync_temp = "1 0 0 1 0 1 1 0 0 0 1 0 0 0 1 1 0 0 1 1 0 0 0 1 1 1 0 0 0 0 1 1 0 0 0 0 0 1 1 1 0 1 1 0 0 0 0 1 0 1 0 1 1 0 0 1 0 0 1 1 1 0 0 1 1 1 0 1 0 1 0 1 1 1 1 1 1 1 1 0 1 1 0 1 1 0 0 1 1 1 1 0 0 0 1 1 0 1 0 1 1 1 0 0 1 0 0 0 0 1 1 1 1 0 1 1 1 0 1 1 1 1 0 1 0 0 0 0 0 1 0 0 0 0 0 0 1 0 1 1 0 1 1 1 1 1 0 0 1 1 0 1 1 1 0 0 0 1 0 1 1 1 0 1 0 0 1 1 0 0 1 0 1 0 1 0 1 0 0 1 0 0 1 0 0 0 1 0 1 0 0 0 0 1 0 0 1 1 0 1 0 0 0 1 1 1 1 1 0 1 0 1 1 0 1 0 0 1 0 1 0 0 1 1 1 1 1 1 0 0 0 0 0 0 0 1 1 0 1 1 0 1 0 1 0 0 0 1 0 0 1 0 1 1 1 1";
-string mes_temp = "0 1 0 0 0 0 1 1 0 1 1 1 1 1 1 1 0 0 1 1 1 0 0 0 1 1 0 1 0 1 0 0 1 0 1 0 0 0 0 1 0 0 0 0 1 0 0 1 0 1 1 0 1 1 1 1 1 0 1 0 1 1 1 0 0 0 1 0 1 1 1 0 0 1 0 0 0 0 1 1 1 1 1 0 1 1 0 1 0 1 0 1 0 0 0 1 0 1 1 1 1 0 1 1 0 0 1 1 1 0 0 1 1 1 1 1 0 0 0 0 0 1 1 1 0 0 1 0 0 1 0 1 0 1 1 0 0 1 0 1 1 1 1 0 0 1 0 1 1 1 0 0 0 0 0 1 0 1 0 1 1 0 1 1 0 0 1 1 0 0 0 0 1 1 0 1 0 1 1 0 1 1 1 0 1 0 0 0 1 0 1 0 1 1 1 1 1 1 0 1 0 0 0 1 1 1 0 0 1 1 0 1 1 1 0 0 1 0 1 0 0 0 1 1 0 1 0 0 0 0 0 0 1 1 0 0 1 0 0 1 0 0 0 1 0 0 0 0 0 1 0 0 1 1 0 1 1 0 1 0 0 1 1 1 1 0 0 1 1 0 1 0 1 0 1 1 0 0 0 0 1 0 1 1 1 0 1 1 0 1 0 0 0 1 1 0 0 0 0 1 0 0 1 1 1 1 1 1 1 0 1 1 1 0 0 0 1 1 1 1 0 0 0 0 0 0 1 1 1 0 1 1 0 1 1 0 0 0 1 0 1 0 0 0 1 0 0 1 1 0 0 1 0 0 0 0 0 1 1 0 1 0 0 1 0 0 1 1 1 1 0 1 1 1 1 1 0 0 0 1 0 1 0 1 0 1 1 0 1 0 0 0 0 1 0 1 0 0 0 0 0 0 0 1 0 1 1 0 1 1 0 1 1 1 1 0 0 1 1 1 1 0 0 0 1 0 0 0 1 1 1 1 1 1 0 1 1 0 0 0 1 1 1 0 1 0 1 1 0 1 0 1 0 0 0 0 1 1 0 0 1 1 0 1 1 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 1 1 0 1 1 0 1 1 0 1 0 1 1 1 0 1 0 1 1 1 1 0 0 0 0 1 0 1 0 1 0 0 1 0 0 0 0 1 0 1 1 0 0 1 0 0 1 1 0 0 0 0 0 1 0 0 0 1 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 1 0 0 1 1 0 1 0 0 1 1 0 1 0 1 1 1 1 1 0 0 1 1 0 0 0 1 1 1 1 1 0 0 1 0 0 0 1 1 1 0 1 1 1 1 1 1 0 0 0 0 1 1 1 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 0 0 0 1 1 1 0 0 0 1 0 0 1 1 1 0 1 1 0 0 1 0 1 0 1 1 1 0 1 1 1 1 0 1 0 1 0 0 0 1 1 1 1 0 1 0 0 1 0 1 0 1 0 0 0 0 0 1 0 1 1 1 1 1 1 1 1 0 1 0 1 0 1 0 1 0 1 1 1 1 0 1 0 0 0 0 1 1 1 0 1 0 0 1 0 0 0 1 1 0 0 1 0 1 1 0 1 0 1 1 0 0 1 1 1 1 0 1 0 1 1 0 0 0 1 1 0 0 1 1 1 1 1 1 0 0 1 0 1 0 1 0 1 0 0 1 1 0 0 1 1 0 0 1 0 1 0 0 1 1 1 1 1 0 1 0 0 1 1 1 0 0 0 0 1 0 0 0 1 1 0 1 1 0 0 1 0 0 0 1 0 1 0 0 1 1 0 1 1 1 1 0 1 1 1 0 1 0 1 0 1 1 1 0 0 1 1 0 0 1 1 1 0 1 1 1 0 1 1 1 0 0 1 1 1 0 1 0 1 0 0 1 1 1 0 1 0 0 0 0 0 1 1 1 1 0 1 1 0 1 1 1 0 0 0 0 1 1 0 0 0 1 0 0 1 0 1 0 0 1 0 1 1 0 0 1 1 0 1 0 0 0 1 0 0 0 1 0 1 1 0 1 0 0 1 0 1 1 1 0 1 0 0 1 1 0 0 0 1 0 1 1 0 0 0 0 0 0 1 0 1 0 0 1 0 0 1 0 1 1 1 1 1 0 1 1 1 1 0 0 0 1 1 0 0 0 1 1 0 1 1 1 0 1 1 0 0 0 0 1 1 1 1 0 0 1 0 0 1 1 1 0 0 1 0 1 1 0 0 1";
+cv::Mat g,hvsMat;
+
+string mes_temp = "1 0 0 1 0 1 1 0 0 0 1 0 0 0 1 1 0 0 1 1 0 0 0 1 1 1 0 0 0 0 1 1 0 0 0 0 0 1 1 1 0 1 1 0 0 0 0 1 0 1 0 1 1 0 0 1 0 0 1 1 1 0 0 1 1 1 0 1 0 1 0 1 1 1 1 1 1 1 1 0 1 1 0 1 1 0 0 1 1 1 1 0 0 0 1 1 0 1 0 1 1 1 0 0 1 0 0 0 0 1 1 1 1 0 1 1 1 0 1 1 1 1 0 1 0 0 0 0 0 1 0 0 0 0 0 0 1 0 1 1 0 1 1 1 1 1 0 0 1 1 0 1 1 1 0 0 0 1 0 1 1 1 0 1 0 0 1 1 0 0 1 0 1 0 1 0 1 0 0 1 0 0 1 0 0 0 1 0 1 0 0 0 0 1 0 0 1 1 0 1 0 0 0 1 1 1 1 1 0 1 0 1 1 0 1 0 0 1 0 1 0 0 1 1 1 1 1 1 0 0 0 0 0 0 0 1 1 0 1 1 0 1 0 1 0 0 0 1 0 0 1 0 1 1 1 1";
+string sync_temp = "0 1 0 0 0 0 1 1 0 1 1 1 1 1 1 1 0 0 1 1 1 0 0 0 1 1 0 1 0 1 0 0 1 0 1 0 0 0 0 1 0 0 0 0 1 0 0 1 0 1 1 0 1 1 1 1 1 0 1 0 1 1 1 0 0 0 1 0 1 1 1 0 0 1 0 0 0 0 1 1 1 1 1 0 1 1 0 1 0 1 0 1 0 0 0 1 0 1 1 1 1 0 1 1 0 0 1 1 1 0 0 1 1 1 1 1 0 0 0 0 0 1 1 1 0 0 1 0 0 1 0 1 0 1 1 0 0 1 0 1 1 1 1 0 0 1 0 1 1 1 0 0 0 0 0 1 0 1 0 1 1 0 1 1 0 0 1 1 0 0 0 0 1 1 0 1 0 1 1 0 1 1 1 0 1 0 0 0 1 0 1 0 1 1 1 1 1 1 0 1 0 0 0 1 1 1 0 0 1 1 0 1 1 1 0 0 1 0 1 0 0 0 1 1 0 1 0 0 0 0 0 0 1 1 0 0 1 0 0 1 0 0 0 1 0 0 0 0 0 1 0 0 1 1 0 1 1 0 1 0 0 1 1 1 1 0 0 1 1 0 1 0 1 0 1 1 0 0 0 0 1 0 1 1 1 0 1 1 0 1 0 0 0 1 1 0 0 0 0 1 0 0 1 1 1 1 1 1 1 0 1 1 1 0 0 0 1 1 1 1 0 0 0 0 0 0 1 1 1 0 1 1 0 1 1 0 0 0 1 0 1 0 0 0 1 0 0 1 1 0 0 1 0 0 0 0 0 1 1 0 1 0 0 1 0 0 1 1 1 1 0 1 1 1 1 1 0 0 0 1 0 1 0 1 0 1 1 0 1 0 0 0 0 1 0 1 0 0 0 0 0 0 0 1 0 1 1 0 1 1 0 1 1 1 1 0 0 1 1 1 1 0 0 0 1 0 0 0 1 1 1 1 1 1 0 1 1 0 0 0 1 1 1 0 1 0 1 1 0 1 0 1 0 0 0 0 1 1 0 0 1 1 0 1 1 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 1 1 0 1 1 0 1 1 0 1 0 1 1 1 0 1 0 1 1 1 1 0 0 0 0 1 0 1 0 1 0 0 1 0 0 0 0 1 0 1 1 0 0 1 0 0 1 1 0 0 0 0 0 1 0 0 0 1 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 1 0 0 1 1 0 1 0 0 1 1 0 1 0 1 1 1 1 1 0 0 1 1 0 0 0 1 1 1 1 1 0 0 1 0 0 0 1 1 1 0 1 1 1 1 1 1 0 0 0 0 1 1 1 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 0 0 0 1 1 1 0 0 0 1 0 0 1 1 1 0 1 1 0 0 1 0 1 0 1 1 1 0 1 1 1 1 0 1 0 1 0 0 0 1 1 1 1 0 1 0 0 1 0 1 0 1 0 0 0 0 0 1 0 1 1 1 1 1 1 1 1 0 1 0 1 0 1 0 1 0 1 1 1 1 0 1 0 0 0 0 1 1 1 0 1 0 0 1 0 0 0 1 1 0 0 1 0 1 1 0 1 0 1 1 0 0 1 1 1 1 0 1 0 1 1 0 0 0 1 1 0 0 1 1 1 1 1 1 0 0 1 0 1 0 1 0 1 0 0 1 1 0 0 1 1 0 0 1 0 1 0 0 1 1 1 1 1 0 1 0 0 1 1 1 0 0 0 0 1 0 0 0 1 1 0 1 1 0 0 1 0 0 0 1 0 1 0 0 1 1 0 1 1 1 1 0 1 1 1 0 1 0 1 0 1 1 1 0 0 1 1 0 0 1 1 1 0 1 1 1 0 1 1 1 0 0 1 1 1 0 1 0 1 0 0 1 1 1 0 1 0 0 0 0 0 1 1 1 1 0 1 1 0 1 1 1 0 0 0 0 1 1 0 0 0 1 0 0 1 0 1 0 0 1 0 1 1 0 0 1 1 0 1 0 0 0 1 0 0 0 1 0 1 1 0 1 0 0 1 0 1 1 1 0 1 0 0 1 1 0 0 0 1 0 1 1 0 0 0 0 0 0 1 0 1 0 0 1 0 0 1 0 1 1 1 1 1 0 1 1 1 1 0 0 0 1 1 0 0 0 1 1 0 1 1 1 0 1 1 0 0 0 0 1 1 1 1 0 0 1 0 0 1 1 1 0 0 1 0 1 1 0 0 1";
 
 // m-sequence for sync, message
 vector<int> sync_seq;
@@ -44,7 +46,7 @@ int main() {
 	string watermark;
 	int key = 0;
 	cv::Mat img;
-	img = cv::imread("1.png"); // image name
+	img = cv::imread("5.png"); // image name
 
 	// Watermark and key value setting
 	while (watermark.length() != 12) {
@@ -59,38 +61,39 @@ int main() {
 	for (int i = 0; i < sync_temp.length(); i++) {
 		if (sync_temp[i] == ' ')
 			continue;
-		message_seq.push_back(sync_temp[i] == '1' ? -1 : 1);
+		sync_seq.push_back(sync_temp[i] == '1' ? -1 : 1);
 	}
 
 	for (int i = 0; i < mes_temp.length(); i++) {
 		if (mes_temp[i] == ' ')
 			continue;
-		sync_seq.push_back(mes_temp[i] == '1' ? -1 : 1);
+		message_seq.push_back(mes_temp[i] == '1' ? -1 : 1);
 	}
 
-	cv::imshow("original", img);
+	for (int i = 0; i < 12; i++) {
+		printf("%d ", watermark[i]);
+	}
+
+	printf("\n");
+
+	//cv::imshow("original", img);
 	cv::Mat input;
 	img.copyTo(input);
+	img.copyTo(g);
 
 	// Encoding
 	cv::Mat img_encoded;
 	img_encoded = Encoder(input, watermark, key);
 
-	cv::imshow("watermarked img", img_encoded);
+	//cv::imshow("watermarked img", img_encoded);
 
-	//cv::imwrite("makred_img.jpg", img_encoded);
+	cv::imwrite("5.jpg", img_encoded);
 
 	// Decoding
-	//pair <cv::Mat, string> temp;
-	//cv::Mat img_decoded;
-	//string wm_decoded;
-	//temp = Decoder(img_encoded, key);
-	//img_decoded = temp.first;
-	//wm_decoded = temp.second;
-
-	//cv::imshow("Decoded img", img_decoded);
-	//printf("Decoded Watermark Message : %s\n",wm_decoded);
-	//cv::imshow("decoded", img_decoded);
+	string wm_decoded;
+	wm_decoded = Decoder(img_encoded, key);
+	
+	cout << "decoded message : " << wm_decoded << endl;
 
 	while (1) {
 		char key = (char)cv::waitKey(10);
@@ -117,7 +120,6 @@ cv::Mat Encoder(cv::Mat img, string watermark, int key) {
 
 	cv::Mat block = array2block(wm_seq, 64, key);
 	
-	cv::Mat hvsMat;
 	hvsMat = pixelVar(img);
 	//imshow("var", hvsMat);
 	int HVS = 0;
@@ -134,6 +136,7 @@ cv::Mat Encoder(cv::Mat img, string watermark, int key) {
 					HVS = 1;
 				if (HVS > 10)
 					HVS = 10;
+				hvsMat.at<Vec3b>(i, j)[k] = HVS;
 				// clipping
 				if (img.at<Vec3b>(i, j)[k] + block.at<char>(i % 64, j % 64) * HVS < 0)
 					img.at<Vec3b>(i, j)[k] = 0;
@@ -180,7 +183,7 @@ cv::Mat array2block(vector < int > rblock, int size, int key) {
 }
 
 // Decoding image, seperating into watermark and png image from jpeg image
-pair<cv::Mat, string > Decoder(cv::Mat img, int key) {
+string Decoder(cv::Mat img, int key) {
 	
 	// denoising with wiener filter
 	cv::Mat denoised;
@@ -189,46 +192,91 @@ pair<cv::Mat, string > Decoder(cv::Mat img, int key) {
 	split(img, rgb_origin);
 	cv::Mat rgb_decoded[3];
 
-	WienerFilter(rgb_origin[0], rgb_decoded[0], cv::Size(5, 5));
-	WienerFilter(rgb_origin[1], rgb_decoded[1], cv::Size(5, 5));
-	WienerFilter(rgb_origin[2], rgb_decoded[2], cv::Size(5, 5));
+	WienerFilter(rgb_origin[0], rgb_decoded[0], cv::Size(3, 3));
+	WienerFilter(rgb_origin[1], rgb_decoded[1], cv::Size(3, 3));
+	WienerFilter(rgb_origin[2], rgb_decoded[2], cv::Size(3, 3));
+	//split(g, rgb_decoded);
 
-	// extracting watermark
-	cv::Mat rgb_sub(cv::Size(1024, 1024), CV_8S);
-	for (int i = 0; i < 1024; i++) {
-		for (int j = 0; j < 1024; j++) {
-			for (int k = 0; k < 3; k++) {
-				rgb_sub.at<char>(i,j) = rgb_decoded[k].at<unsigned char>(i, j) - rgb_origin[k].at<unsigned char>(i, j);
+	string message;
+	message.resize(12);
 
-				// clipping detect
-				if (rgb_sub.at<char>(i, j) == 0) {
-					if (rgb_decoded[k].at<unsigned char>(i, j) == 255) {
-						rgb_sub.at<char>(i, j) = 1;
-					}
-					else if (rgb_decoded[k].at<unsigned char>(i, j) == 0) {
-						rgb_sub.at<char>(i, j) = -1;
+	int mes_value[12] = { 0, };
+
+	int sum_max = 0;
+
+	cv::Mat subimg(cv::Size(1024, 1024), CV_8S);
+
+	for (int channel = 0; channel < 3; channel++) {
+		for (int block_x = 0; block_x < 1024; block_x+= 64) {
+			printf("channel %d processing...%d%%\n", channel, block_x * 100 / (1024));
+			for (int block_y = 0; block_y < 1024; block_y += 64) {
+				// extract message per block
+				for (int i = block_x; i < block_x + 64; i++) {
+					for (int j = block_y; j < block_y +64; j++) {
+						int rgb_sub = rgb_origin[channel].at<unsigned char>(i, j) - rgb_decoded[channel].at<unsigned char>(i, j);
+						
+						if (rgb_sub > 0)
+							rgb_sub = 1;
+						else if (rgb_sub < 0)
+							rgb_sub = -1;
+
+						else if (rgb_sub == 0) {
+							if (rgb_decoded[channel].at<unsigned char>(i, j) == 255) {
+								rgb_sub = 1;
+							}
+							else if (rgb_decoded[channel].at<unsigned char>(i, j) == 0) {
+								rgb_sub = -1;
+							}
+						}
+
+						subimg.at<char>(i, j) = rgb_sub;
 					}
 				}
 
-				// change for binary code
-				rgb_sub.at<char>(i, j) = (rgb_sub.at<char>(i, j) == 1 ? 0 : 1);
+				vector<int> barray(64 * 64);
+				pair<int, int> temp;
+
+				// array, matrix matching
+				for (int k = 0; k < 4096; k++) {
+					temp = match[k];
+					barray[k] = subimg.at<char>(temp.first+block_x, temp.second+block_y);
+				}
+
+				// sync check
+				int sync_sum = 0;
+				for (int k = 0; k < 1024; k++) {
+					sync_sum += barray[k] * sync_seq[k];
+				}
+				if (sync_sum < 600)
+					continue;
+
+				//if (sum_max > sync_sum)
+				//	continue;
+
+				//sum_max = sync_sum;
+
+				//string mes;
+				// message decoding
+				for (int k = 0; k < 12; k++) {
+					for (int m = 0; m < 128; m++) {
+						int mes_sum = 0;
+						for (int index = 0; index < 256; index++)
+							mes_sum += message_seq[(index+m)%256] * barray[1024 + k*256+index];
+						
+						if (mes_sum > 150 && mes_sum > mes_value[k]) {
+							message[k] = m;
+							mes_value[k] = mes_sum;
+							break;
+						}
+					}
+				}
+
 			}
 		}
 	}
 
-	cv::Mat sub_img;
 
-	// blocking
-	for (int i = 0; i < 1024 / 64; i++) {
-		for (int j = 0; j < 1024 / 64; j++) {
-			cv::Rect rect(i, j, 64, 64);
-			cv::Mat block = sub_img(rect);
-			vector<int> barray(64 * 64);
-			barray = block2array(block, key);
-		}
-	}
-
-	return { img, "asdfasd" };
+	return message;
 }
 
 // 2D block to 1D array matching
