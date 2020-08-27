@@ -1,5 +1,5 @@
 # Image-Watermarking
-Watermarking letters into image using maximum length sequence with C++.<br>
+Watermarking message into image using maximum length sequence with C++.<br>
 It is based watermarked image g(x,y) = f(x,y) + a(x,y) * m(x,y)<br>
 where, f(x,y) is original, a(x,y) is defined by HVS, m(x,y) is message.<br>
 
@@ -15,3 +15,5 @@ where, f(x,y) is original, a(x,y) is defined by HVS, m(x,y) is message.<br>
 1. Use Wiener Filter for recover the image.
 2. Calculate differance between watermarked image and filtered image.
 3. Calculate watermarked message by synchronizing sync part and rotating message part.
+
+
